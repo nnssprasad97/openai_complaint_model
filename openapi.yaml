@@ -1,0 +1,67 @@
+openapi: 3.0.3
+info:
+  title: "Model Inference API"
+  version: "1.0.0"
+  description: "A contract-first machine learning text classification inference service."
+paths:
+  /v1/predict:
+    post:
+      summary: "Predict label from text"
+      description: "Performs sentiment/classification inference on the provided input text string."
+      operationId: "predict"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                text:
+                  type: string
+                  minLength: 1
+                  description: "Input text string for model inference."
+                  example: "This product is fantastic and exceeded my expectations."
+      responses:
+        '200':
+          description: "Successful prediction"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - label
+                  - score
+                properties:
+                  label:
+                    type: string
+                    description: "Predicted classification label"
+                    example: "positive"
+                  score:
+                    type: number
+                    format: float
+                    description: "Confidence score between 0.0 and 1.0"
+                    example: 0.95
+        '400':
+          description: "Bad Request - Invalid input data or malformed JSON payload"
+        '422':
+          description: "Unprocessable Entity - Request validation failed"
+  /health:
+    get:
+      summary: "Service Health Check"
+      description: "Endpoint used by orchestration systems (Docker, Kubernetes) to monitor service readiness."
+      operationId: "healthCheck"
+      responses:
+        '200':
+          description: "Service is healthy and ready to receive requests"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
