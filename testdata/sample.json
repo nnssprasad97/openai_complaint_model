@@ -1,0 +1,54 @@
+{
+  "task": "Deploy an OpenAPI-Compliant Model Inference Service with Nginx and Python",
+  "mode": "verify",
+  "fixture": "testdata/sample.json",
+  "expect": {
+    "ok": true,
+    "notes": [
+      "negative path covered"
+    ]
+  },
+  "valid_cases": [
+    {
+      "payload": {
+        "text": "This product is fantastic and exceeded all my expectations!"
+      },
+      "expected_status": 200,
+      "expected_label": "positive"
+    },
+    {
+      "payload": {
+        "text": "The delivery was terrible and customer service was poor."
+      },
+      "expected_status": 200,
+      "expected_label": "negative"
+    },
+    {
+      "payload": {
+        "text": "The package arrived at 3pm."
+      },
+      "expected_status": 200,
+      "expected_label": "neutral"
+    }
+  ],
+  "negative_cases": [
+    {
+      "description": "Missing required text field",
+      "payload": {},
+      "expected_status": [400, 422]
+    },
+    {
+      "description": "Non-JSON plain text body",
+      "payload": "plain text payload without JSON formatting",
+      "content_type": "text/plain",
+      "expected_status": [400, 415, 422]
+    },
+    {
+      "description": "Empty text string failing min_length=1",
+      "payload": {
+        "text": ""
+      },
+      "expected_status": [400, 422]
+    }
+  ]
+}
